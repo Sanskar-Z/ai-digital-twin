@@ -5,10 +5,18 @@ import '../styles/index.css';
 const EmailReply = () => {
   const [emailContent, setEmailContent] = useState('');
   const [reply, setReply] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log('Generating reply for:', emailContent);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setReply('Thank you for your email. I have reviewed the information you provided and...');
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -16,7 +24,7 @@ const EmailReply = () => {
       <header>
         <h1>Email Reply Generation</h1>
       </header>
-      <main>
+      <main className="feature-section">
         <section>
           <Link to="/" className="home-button">Home</Link>
           <h2>Generate Smart Email Replies</h2>
@@ -38,12 +46,16 @@ const EmailReply = () => {
             <button type="submit">Generate Reply</button>
           </form>
           <div id="output" aria-live="polite">
-            {reply && <p>{reply}</p>}
+            {isLoading ? (
+              <div className="loading">Crafting your reply</div>
+            ) : (
+              reply && <p>{reply}</p>
+            )}
           </div>
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Digital Twin Solutions</p>
+        <p>&copy; Code Crusaders</p>
       </footer>
     </div>
   );

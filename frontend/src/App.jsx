@@ -65,6 +65,14 @@ function Home() {
   )
 }
 
+function footer(){
+  return(
+    <footer style={{ background: '#5a00d3', color: 'white', padding: '20px', textAlign: 'center' }}>
+      <p>&copy; Code Crusaders</p>
+    </footer>
+  )
+}
+
 function App() {
   return (
     <Router>

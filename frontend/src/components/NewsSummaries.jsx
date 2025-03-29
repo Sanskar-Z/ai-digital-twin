@@ -5,11 +5,16 @@ import '../styles/index.css';
 const NewsSummaries = () => {
   const [newsInput, setNewsInput] = useState('');
   const [summary, setSummary] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle news summary generation logic here
+    setIsLoading(true);
     console.log('Generating summary for:', newsInput);
+    setTimeout(() => {
+      setSummary('The article discusses recent advancements in artificial intelligence and their impact on...');
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -17,7 +22,7 @@ const NewsSummaries = () => {
       <header>
         <h1>News Summaries</h1>
       </header>
-      <main>
+      <main className="feature-section">
         <section>
           <Link to="/" className="home-button">Home</Link>
           <h2>Get Concise News Summaries</h2>
@@ -39,12 +44,16 @@ const NewsSummaries = () => {
             <button type="submit">Generate Summary</button>
           </form>
           <div id="output" aria-live="polite">
-            {summary && <p>{summary}</p>}
+            {isLoading ? (
+              <div className="loading">Generating summary</div>
+            ) : (
+              summary && <p>{summary}</p>
+            )}
           </div>
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Digital Twin Solutions</p>
+        <p>&copy; Code Crusaders</p>
       </footer>
     </div>
   );

@@ -8,7 +8,6 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
     console.log('Login attempt with:', { email, password });
   };
 
@@ -22,32 +21,39 @@ const Login = () => {
           <Link to="/" className="home-button">Home</Link>
           <h2>Welcome Back!</h2>
           <p>Log in to access your AI-powered digital twin services.</p>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-            />
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-            />
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="email">Email:</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
             <button type="submit">Login</button>
           </form>
-          <p>Don't have an account? <Link to="/signup">Sign up here</Link>.</p>
+          <div className="auth-links">
+            <p>Don't have an account? <Link to="/signup">Sign up here</Link>.</p>
+            <p><Link to="/forgot-password">Forgot password?</Link></p>
+          </div>
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Digital Twin Solutions</p>
+        <p>&copy; Code Crusaders</p>
       </footer>
     </div>
   );

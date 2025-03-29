@@ -5,11 +5,18 @@ import '../styles/index.css';
 const ResearchAssistance = () => {
   const [researchQuery, setResearchQuery] = useState('');
   const [assistance, setAssistance] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle research assistance logic here
+    setIsLoading(true);
     console.log('Processing research query:', researchQuery);
+    
+
+    setTimeout(() => {
+      setAssistance('Based on your research query, here are the key findings and relevant resources...');
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -17,7 +24,7 @@ const ResearchAssistance = () => {
       <header>
         <h1>Research Assistance</h1>
       </header>
-      <main>
+      <main className="feature-section">
         <section>
           <Link to="/" className="home-button">Home</Link>
           <h2>Get Research Help</h2>
@@ -39,12 +46,16 @@ const ResearchAssistance = () => {
             <button type="submit">Get Assistance</button>
           </form>
           <div id="output" aria-live="polite">
-            {assistance && <p>{assistance}</p>}
+            {isLoading ? (
+              <div className="loading">Researching</div>
+            ) : (
+              assistance && <p>{assistance}</p>
+            )}
           </div>
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Digital Twin Solutions</p>
+        <p>&copy; Code Crusaders</p>
       </footer>
     </div>
   );

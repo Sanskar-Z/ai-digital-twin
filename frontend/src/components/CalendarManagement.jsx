@@ -5,11 +5,19 @@ import '../styles/index.css';
 const CalendarManagement = () => {
   const [schedulingRequest, setSchedulingRequest] = useState('');
   const [schedule, setSchedule] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle calendar management logic here
+    setIsLoading(true);
     console.log('Processing scheduling request:', schedulingRequest);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setSchedule('Your schedule has been organized. Here are your upcoming events...');
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -17,7 +25,7 @@ const CalendarManagement = () => {
       <header>
         <h1>Calendar Management</h1>
       </header>
-      <main>
+      <main className="feature-section">
         <section>
           <Link to="/" className="home-button">Home</Link>
           <h2>Organize Your Schedule</h2>
@@ -39,12 +47,16 @@ const CalendarManagement = () => {
             <button type="submit">Generate Schedule</button>
           </form>
           <div id="output" aria-live="polite">
-            {schedule && <p>{schedule}</p>}
+            {isLoading ? (
+              <div className="loading">Organizing your schedule</div>
+            ) : (
+              schedule && <p>{schedule}</p>
+            )}
           </div>
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Digital Twin Solutions</p>
+        <p>&copy; Code Crusaders</p>
       </footer>
     </div>
   );
