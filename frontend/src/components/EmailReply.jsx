@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/index.css';
+import { emailService } from '../services/api';
 
 const EmailReply = () => {
   const [emailContent, setEmailContent] = useState('');
   const [reply, setReply] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [tone, setTone] = useState('professional');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log('Generating reply for:', emailContent);
     
-    // Simulate API call
-    setTimeout(() => {
-      setReply('Thank you for your email. I have reviewed the information you provided and...');
+    try {
+      const result = await emailService.generateReply(emailContent, tone);
+      setReply(result.reply);
+    } catch (error) {
+      console.error('Error generating reply:', error);
+      setReply('An error occurred while generating the reply. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
     <div className="page-container">
       <header>
-        <h1 class="title">Email Reply Generation</h1>
+        <h1 className="title">Email Reply Generation</h1>
       </header>
       <main className="feature-section">
         <section>
@@ -43,6 +48,19 @@ const EmailReply = () => {
               placeholder="Enter your email content here..."
               required
             />
+            <div className="form-group">
+              <label htmlFor="toneSelect">Select tone:</label>
+              <select
+                id="toneSelect"
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+              >
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="formal">Formal</option>
+                <option value="casual">Casual</option>
+              </select>
+            </div>
             <button type="submit">Generate Reply</button>
           </form>
           <div id="output" aria-live="polite">

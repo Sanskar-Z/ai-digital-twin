@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { generateEmailReply } = require('./services/emailReply');
-const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require('./services/calender');
+const { summarizeNewsByInterest } = require('./services/news');
+const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require('./services/calendar');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,18 +21,31 @@ app.post('/email_generate', async (req, res) => {
             return res.status(400).json({ error: 'Email content is required' });
         }
 
+        console.log(`Processing email reply request with tone: ${tone || 'professional'}`);
         const result = await generateEmailReply(emailContent, tone);
+        console.log('Email reply generated successfully');
         res.json(result);
     } catch (error) {
-        console.error('Error in email generation:', error);
-        res.status(500).json({ error: error.message });
+        console.error('Error in email generation:', error.message);
+        res.status(500).json({ 
+            error: 'Failed to generate email reply', 
+            details: error.message
+        });
     }
 });
 
 app.post('/news_summarize', async (req, res) => {
     try {
-        res.json({ message: 'News summarization endpoint' });
+        const { newsContent, userInterest } = req.body;
+        
+        if (!newsContent) {
+            return res.status(400).json({ error: 'News content is required' });
+        }
+
+        const result = await summarizeNewsByInterest(newsContent, userInterest);
+        res.json(result);
     } catch (error) {
+        console.error('Error in news summarization:', error);
         res.status(500).json({ error: error.message });
     }
 });
