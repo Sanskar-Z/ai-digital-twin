@@ -22,7 +22,7 @@ const ResearchAssistance = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>Research Assistance</h1>
+        <h1 class="title">Research Assistance</h1>
       </header>
       <main className="feature-section">
         <section>

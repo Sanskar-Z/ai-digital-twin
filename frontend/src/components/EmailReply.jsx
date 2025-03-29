@@ -22,7 +22,7 @@ const EmailReply = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>Email Reply Generation</h1>
+        <h1 class="title">Email Reply Generation</h1>
       </header>
       <main className="feature-section">
         <section>

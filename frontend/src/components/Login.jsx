@@ -14,7 +14,7 @@ const Login = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>Login</h1>
+        <h1 class="title">Login</h1>
       </header>
       <main>
         <section>

@@ -20,7 +20,7 @@ const NewsSummaries = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>News Summaries</h1>
+        <h1 class="title">News Summaries</h1>
       </header>
       <main className="feature-section">
         <section>

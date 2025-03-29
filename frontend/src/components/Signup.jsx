@@ -25,7 +25,7 @@ const Signup = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>Signup</h1>
+        <h1 class="title">Signup</h1>
       </header>
       <main>
         <section>

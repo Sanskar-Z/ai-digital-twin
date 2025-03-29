@@ -23,7 +23,7 @@ const CalendarManagement = () => {
   return (
     <div className="page-container">
       <header>
-        <h1>Calendar Management</h1>
+        <h1 class="title">Calendar Management</h1>
       </header>
       <main className="feature-section">
         <section>
