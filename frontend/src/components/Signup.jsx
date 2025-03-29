@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-// import '../firebase'; // Ensure Firebase is initialized in this file
+import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import '../styles/index.css';
 
 const Signup = () => {
@@ -21,7 +21,6 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const auth = getAuth();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
@@ -29,7 +28,6 @@ const Signup = () => {
       // Update the user's display name
       await updateProfile(user, { displayName: formData.name });
 
-      console.log('Signup successful:', user);
       alert('Signup successful! Please log in.');
     } catch (error) {
       console.error('Signup failed:', error.message);
@@ -40,7 +38,7 @@ const Signup = () => {
   return (
     <div className="page-container">
       <header>
-        <h1 class="title">Signup</h1>
+        <h1 className="title">Signup</h1>
       </header>
       <main>
         <section>

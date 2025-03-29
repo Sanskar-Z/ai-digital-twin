@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-// import '../firebase'; // Ensure Firebase is initialized in this file
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import '../styles/index.css';
 
 const Login = () => {
@@ -10,12 +10,14 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const auth = getAuth();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      console.log('Login successful:', user);
+      // Get the Firebase ID token
+      const token = await user.getIdToken();
+      localStorage.setItem('token', token);
+
       alert('Login successful!');
     } catch (error) {
       console.error('Login failed:', error.message);
@@ -26,7 +28,7 @@ const Login = () => {
   return (
     <div className="page-container">
       <header>
-        <h1 class="title">Login</h1>
+        <h1 className="title">Login</h1>
       </header>
       <main>
         <section>
