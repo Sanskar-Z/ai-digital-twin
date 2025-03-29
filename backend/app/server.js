@@ -159,6 +159,16 @@ app.delete('/calendar/events/:eventId', async (req, res) => {
     }
 });
 
+app.get('/calendar/auth', (req, res) => {
+    try {
+        // Redirect to calendar service's auth endpoint
+        res.redirect('http://localhost:4000/auth');
+    } catch (error) {
+        console.error('Error redirecting to auth:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/api/research-assistance', async (req, res) => {
     try {
         console.log('Received request for research assistance:', req.body);

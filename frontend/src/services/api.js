@@ -93,6 +93,10 @@ export const calendarService = {
     }
   },
   
+  getAuthUrl: () => {
+    return `${API_BASE_URL}/calendar/auth`;
+  },
+  
   getEvents: async (startTime, endTime) => {
     try {
       const response = await fetch(

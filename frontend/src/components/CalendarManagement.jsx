@@ -15,6 +15,7 @@ const CalendarManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -33,11 +34,21 @@ const CalendarManagement = () => {
       );
       
       setEvents(result.items || []);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Error fetching events:', error);
+      if (error.message && (error.message.includes('not authenticated') || 
+          error.message.includes('authentication') || 
+          error.message.includes('Calendar API not authenticated'))) {
+        setIsAuthenticated(false);
+      }
     } finally {
       setIsLoadingEvents(false);
     }
+  };
+
+  const handleSignIn = () => {
+    window.location.href = calendarService.getAuthUrl();
   };
 
   const handleSubmit = async (e) => {
@@ -88,125 +99,180 @@ const CalendarManagement = () => {
         <h1 className="title">Calendar Management</h1>
       </header>
       <main className="feature-section">
+        <style>
+          {`
+            .auth-section {
+              margin: 20px 0;
+              padding: 15px;
+              background-color: #f8f9fa;
+              border-radius: 8px;
+              border: 1px solid #ddd;
+            }
+            .signin-button {
+              background-color: #4285F4;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 4px;
+              font-weight: bold;
+              cursor: pointer;
+              transition: background-color 0.3s;
+            }
+            .signin-button:hover {
+              background-color: #357ae8;
+            }
+            .auth-required {
+              margin: 20px 0;
+              padding: 30px;
+              text-align: center;
+              background-color: #f8f9fa;
+              border-radius: 8px;
+              border: 1px solid #ddd;
+            }
+            .auth-required p {
+              margin-bottom: 20px;
+              font-size: 16px;
+            }
+          `}
+        </style>
         <section>
           <Link to="/" className="home-button">Home</Link>
           <h2>Organize Your Schedule</h2>
           <p>
             Let our AI assistant help you manage your calendar, schedule meetings, and set reminders.
           </p>
+          {!isAuthenticated && (
+            <div className="auth-section">
+              <p>You need to sign in to access your Google Calendar.</p>
+              <button onClick={handleSignIn} className="signin-button">
+                Sign in to Calendar
+              </button>
+            </div>
+          )}
         </section>
         <section id="demo">
           <h3>Schedule a Meeting</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="subjectInput">Meeting Subject:</label>
-              <input
-                type="text"
-                id="subjectInput"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Enter meeting subject"
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="dateInput">Date:</label>
-              <input
-                type="date"
-                id="dateInput"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="timeInput">Time:</label>
-              <input
-                type="time"
-                id="timeInput"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="durationInput">Duration (minutes):</label>
-              <input
-                type="number"
-                id="durationInput"
-                value={duration}
-                onChange={(e) => setDuration(parseInt(e.target.value))}
-                min="15"
-                step="15"
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="attendeesInput">Attendees (comma-separated emails):</label>
-              <input
-                type="text"
-                id="attendeesInput"
-                value={attendees}
-                onChange={(e) => setAttendees(e.target.value)}
-                placeholder="email1@example.com, email2@example.com"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="descriptionInput">Description:</label>
-              <textarea
-                id="descriptionInput"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter meeting description"
-              />
-            </div>
-            
-            <button type="submit">Schedule Meeting</button>
-          </form>
-          
-          <div id="output" aria-live="polite">
-            {isLoading ? (
-              <div className="loading">Scheduling your meeting</div>
-            ) : (
-              schedule && <p>{schedule}</p>
-            )}
-          </div>
-          
-          <div className="events-section">
-            <h3>Upcoming Events</h3>
-            {isLoadingEvents ? (
-              <div className="loading">Loading events</div>
-            ) : (
-              <ul className="events-list">
-                {events.length > 0 ? (
-                  events.map(event => (
-                    <li key={event.id} className="event-item">
-                      <div className="event-details">
-                        <strong>{event.summary}</strong>
-                        <p>
-                          {new Date(event.start.dateTime).toLocaleString()} - 
-                          {new Date(event.end.dateTime).toLocaleTimeString()}
-                        </p>
-                      </div>
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDeleteEvent(event.id)}
-                      >
-                        Delete
-                      </button>
-                    </li>
-                  ))
+          {isAuthenticated ? (
+            <>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="subjectInput">Meeting Subject:</label>
+                  <input
+                    type="text"
+                    id="subjectInput"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Enter meeting subject"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="dateInput">Date:</label>
+                  <input
+                    type="date"
+                    id="dateInput"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="timeInput">Time:</label>
+                  <input
+                    type="time"
+                    id="timeInput"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="durationInput">Duration (minutes):</label>
+                  <input
+                    type="number"
+                    id="durationInput"
+                    value={duration}
+                    onChange={(e) => setDuration(parseInt(e.target.value))}
+                    min="15"
+                    step="15"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="attendeesInput">Attendees (comma-separated emails):</label>
+                  <input
+                    type="text"
+                    id="attendeesInput"
+                    value={attendees}
+                    onChange={(e) => setAttendees(e.target.value)}
+                    placeholder="email1@example.com, email2@example.com"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="descriptionInput">Description:</label>
+                  <textarea
+                    id="descriptionInput"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter meeting description"
+                  />
+                </div>
+                
+                <button type="submit">Schedule Meeting</button>
+              </form>
+              
+              <div id="output" aria-live="polite">
+                {isLoading ? (
+                  <div className="loading">Scheduling your meeting</div>
                 ) : (
-                  <p>No upcoming events found.</p>
+                  schedule && <p>{schedule}</p>
                 )}
-              </ul>
-            )}
-          </div>
+              </div>
+              
+              <div className="events-section">
+                <h3>Upcoming Events</h3>
+                {isLoadingEvents ? (
+                  <div className="loading">Loading events</div>
+                ) : (
+                  <ul className="events-list">
+                    {events.length > 0 ? (
+                      events.map(event => (
+                        <li key={event.id} className="event-item">
+                          <div className="event-details">
+                            <strong>{event.summary}</strong>
+                            <p>
+                              {new Date(event.start.dateTime).toLocaleString()} - 
+                              {new Date(event.end.dateTime).toLocaleTimeString()}
+                            </p>
+                          </div>
+                          <button
+                            className="delete-button"
+                            onClick={() => handleDeleteEvent(event.id)}
+                          >
+                            Delete
+                          </button>
+                        </li>
+                      ))
+                    ) : (
+                      <p>No upcoming events found.</p>
+                    )}
+                  </ul>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="auth-required">
+              <p>Please sign in to Google Calendar to schedule meetings and view your calendar.</p>
+              <button onClick={handleSignIn} className="signin-button">
+                Sign in to Calendar
+              </button>
+            </div>
+          )}
         </section>
       </main>
     </div>
