@@ -3,16 +3,32 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { generateEmailReply } = require('./services/emailReply');
+const { summarizeEmail } = require('./services/emailSummarize');
 const { summarizeNewsByInterest } = require('./services/news');
 const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require('./services/calendar');
-const { gatherInsights } = require('./services/researchAssistant');
+const { gatherInsights, cleanupUploadedFiles } = require('./services/researchAssistant');
+const researchRoutes = require('./routes/researchRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configure uploads directory cleanup interval (every 6 hours)
+const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+setInterval(() => {
+    console.log('Running scheduled cleanup of uploaded files');
+    cleanupUploadedFiles(12); // Delete files older than 12 hours
+}, CLEANUP_INTERVAL_MS);
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Use research routes
+app.use('/api/research', researchRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 app.post('/email_generate', async (req, res) => {
     try {
@@ -30,6 +46,27 @@ app.post('/email_generate', async (req, res) => {
         console.error('Error in email generation:', error.message);
         res.status(500).json({ 
             error: 'Failed to generate email reply', 
+            details: error.message
+        });
+    }
+});
+
+app.post('/email_summarize', async (req, res) => {
+    try {
+        const { emailContent } = req.body;
+        
+        if (!emailContent) {
+            return res.status(400).json({ error: 'Email content is required' });
+        }
+
+        console.log('Processing email summarization request');
+        const result = await summarizeEmail(emailContent);
+        console.log('Email summarized successfully');
+        res.json(result);
+    } catch (error) {
+        console.error('Error in email summarization:', error.message);
+        res.status(500).json({ 
+            error: 'Failed to summarize email', 
             details: error.message
         });
     }

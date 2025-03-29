@@ -21,6 +21,27 @@ export const emailService = {
       throw error;
     }
   },
+  
+  summarizeEmail: async (emailContent) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/email_summarize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emailContent }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error summarizing email:', error);
+      throw error;
+    }
+  },
 };
 
 export const newsService = {

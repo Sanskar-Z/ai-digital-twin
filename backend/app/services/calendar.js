@@ -232,4 +232,4 @@ module.exports = {
   setReminder,
   getCalendarEvents,
   deleteEvent
-};s
+};

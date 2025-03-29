@@ -69,9 +69,6 @@ const NewsSummaries = () => {
           </div>
         </section>
       </main>
-      <footer>
-        <p>&copy; Code Crusaders</p>
-      </footer>
     </div>
   );
 };

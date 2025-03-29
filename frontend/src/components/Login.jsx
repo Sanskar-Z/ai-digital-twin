@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import '../firebase'; // Ensure Firebase is initialized in this file
+// import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+// import '../firebase'; // Ensure Firebase is initialized in this file
 import '../styles/index.css';
 
 const Login = () => {
@@ -64,9 +64,6 @@ const Login = () => {
           </div>
         </section>
       </main>
-      <footer>
-        <p>&copy; Code Crusaders</p>
-      </footer>
     </div>
   );
 };

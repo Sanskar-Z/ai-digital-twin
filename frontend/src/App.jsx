@@ -6,6 +6,7 @@ import CalendarManagement from './components/CalendarManagement'
 import ResearchAssistance from './components/ResearchAssistance'
 import Login from './components/Login'
 import Signup from './components/Signup'
+import EmailSummarize from './components/EmailSummarize'
 
 function Header() {
   return (
@@ -30,6 +31,7 @@ function Header() {
 function FeatureList() {
   const features = [
     { title: 'Email Reply Generation', href: '/email-reply' },
+    { title: 'Email Summarization', href: '/email-summarize' },
     { title: 'News Summaries', href: '/news-summaries' },
     { title: 'Calendar Management', href: '/calendar-management' },
     { title: 'Research Assistance', href: '/research-assistance' }
@@ -82,6 +84,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/email-reply" element={<EmailReply />} />
+            <Route path="/email-summarize" element={<EmailSummarize />} />
             <Route path="/news-summaries" element={<NewsSummaries />} />
             <Route path="/calendar-management" element={<CalendarManagement />} />
             <Route path="/research-assistance" element={<ResearchAssistance />} />

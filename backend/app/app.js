@@ -1,35 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { gatherInsights } = require('./services/researchAssistant');
+const path = require('path');
+const researchRoutes = require('./routes/researchRoutes');
+const { cleanupUploadedFiles } = require('./services/researchAssistant');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Research Assistance Endpoint
-app.post('/api/research-assistance', async (req, res) => {
-    try {
-        console.log('Received request:', req.body);
+// Create uploads directory if it doesn't exist
+const fs = require('fs');
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-        const { input, query } = req.body;
-        if (!input || !query) {
-            console.log('Invalid request: Missing input or query.');
-            return res.status(400).json({ error: 'Input and query are required.' });
-        }
+// Serve uploaded files statically for development purposes only
+// In production, use proper security measures
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-        const result = await gatherInsights(input, query);
-        console.log('Response to client:', result);
-        res.json(result);
-    } catch (error) {
-        console.error('Error in /api/research-assistance:', error);
-        res.status(500).json({ error: 'An error occurred while processing your request.' });
-    }
-});
+// Routes
+app.use('/api/research', researchRoutes);
 
-// Start Server
+// Configure uploads directory cleanup interval (every 12 hours)
+const CLEANUP_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12 hours
+setInterval(() => {
+    console.log('Running scheduled cleanup of uploaded files');
+    cleanupUploadedFiles(24); // Delete files older than 24 hours
+}, CLEANUP_INTERVAL_MS);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
