@@ -6,20 +6,14 @@ const { getFirestore } = require('firebase-admin/firestore');
 
 const app = express();
 const PORT = 5000;
-
-// Initialize Firebase Admin SDK
-const serviceAccount = require('./firebase-service-account.json'); // Replace with your Firebase service account key file
+const serviceAccount = require('./firebase-service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 const auth = getAuth();
 const db = getFirestore();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-
-// Signup route
 app.post('/api/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -29,8 +23,6 @@ app.post('/api/signup', async (req, res) => {
       password,
       displayName: name,
     });
-
-    // Save additional user data in Firestore
     await db.collection('users').doc(userRecord.uid).set({
       name,
       email,
@@ -44,7 +36,6 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Login route
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -53,9 +44,6 @@ app.post('/api/login', async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
-
-    // Firebase does not provide password validation in Admin SDK.
-    // Use Firebase Authentication client SDK on the frontend for password validation.
     res.status(200).json({ message: 'Login successful', uid: user.uid });
   } catch (error) {
     console.error('Login error:', error);
@@ -63,7 +51,6 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

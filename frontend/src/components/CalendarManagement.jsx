@@ -209,9 +209,6 @@ const CalendarManagement = () => {
           </div>
         </section>
       </main>
-      <footer>
-        <p>&copy; Code Crusaders</p>
-      </footer>
     </div>
   );
 };
