@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import '../firebase'; // Ensure Firebase is initialized in this file
 import '../styles/index.css';
 
 const Signup = () => {
@@ -17,9 +19,22 @@ const Signup = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup attempt with:', formData);
+    const auth = getAuth();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      // Update the user's display name
+      await updateProfile(user, { displayName: formData.name });
+
+      console.log('Signup successful:', user);
+      alert('Signup successful! Please log in.');
+    } catch (error) {
+      console.error('Signup failed:', error.message);
+      alert('Signup failed. Please try again.');
+    }
   };
 
   return (
@@ -83,4 +98,4 @@ const Signup = () => {
   );
 };
 
-export default Signup; 
+export default Signup;

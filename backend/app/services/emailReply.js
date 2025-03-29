@@ -1,12 +1,16 @@
 const dotenv = require('dotenv');
 dotenv.config({
-    path: '../.env'
+    path: '../.env' // Ensure the correct path to the .env file
 });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 if (!process.env.GEMINI_API_KEY) {
     console.error('GEMINI_API_KEY is not defined in environment variables');
     process.exit(1);
 }
+
+console.log('Using GEMINI_API_KEY:', process.env.GEMINI_API_KEY); // Debugging: Log the API key (ensure this is removed in production)
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
@@ -45,6 +49,7 @@ exports.generateEmailReply = async (emailContent, tone = "professional") => {
         return { reply };
     } catch (error) {
         console.error('Error generating email reply:', error.message);
+        console.error('Full error details:', error); // Added detailed error logging
         throw new Error(`Failed to generate email reply: ${error.message}`);
     }
 };

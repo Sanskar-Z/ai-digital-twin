@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { generateEmailReply } = require('./services/emailReply');
 const { summarizeNewsByInterest } = require('./services/news');
 const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require('./services/calendar');
+const { gatherInsights } = require('./services/researchAssistant');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -100,6 +101,25 @@ app.delete('/calendar/events/:eventId', async (req, res) => {
     } catch (error) {
         console.error('Error deleting event:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/research-assistance', async (req, res) => {
+    try {
+        console.log('Received request for research assistance:', req.body);
+
+        const { input, query } = req.body;
+        if (!input || !query) {
+            console.log('Invalid request: Missing input or query.');
+            return res.status(400).json({ error: 'Input and query are required.' });
+        }
+
+        const result = await gatherInsights(input, query);
+        console.log('Response to client:', result);
+        res.json(result);
+    } catch (error) {
+        console.error('Error in /api/research-assistance:', error);
+        res.status(500).json({ error: 'An error occurred while processing your request.' });
     }
 });
 
