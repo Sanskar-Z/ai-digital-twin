@@ -2,11 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { 
   getAuth,
   connectAuthEmulator,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-
+  signInWithEmailAndPassword 
 } from 'firebase/auth';
 
 
@@ -24,61 +20,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseConfig);
-connectAuthEmulator(auth, "http://localhost:9099"); // Corrected emulator URL
-
-// Ensure these elements are defined or imported
-const txtEmail = document.getElementById('txtEmail');
-const txtPassword = document.getElementById('txtPassword');
-const btnLogin = document.getElementById('btnLogin');
-const btnSignup = document.getElementById('btnSignup');
-const btnLogout = document.getElementById('btnLogout');
+connectAuthEmulator(auth, "http://localhost:5173/login");
 
 const loginEmailPassword = async () => {
   const loginEmail = txtEmail.value;
   const loginPassword = txtPassword.value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-    console.log(userCredential.user);
+    
   } catch (error) {
-    console.log(error);
+    con
   }
 
+  const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+  console.log(userCredential.user);
 
 }
 
 btnLogin.addEventListener('click', loginEmailPassword); 
 
-const createAccount = async () => {
-  const loginEmail = txtEmail.value;
-  const loginPassword = txtPassword.value;
-
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, loginEmail, loginPassword);
-    console.log(userCredential.user);
-  } catch (error) {
-    console.log(error);
-  }
-
-}
-
-// Corrected event listener assignment for btnSignup
-btnSignup.addEventListener('click', createAccount);
-
-const monitorAuthState = async () => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log('User is signed in:', user);
-    } else {
-      console.log('No user is signed in.');
-    }
-  });
-}
-
-monitorAuthState();
-
-const logout = async () => {
-  await signOut(auth);
-}
-
-btnLogout.addEventListener('click', logout);
+export default app;
