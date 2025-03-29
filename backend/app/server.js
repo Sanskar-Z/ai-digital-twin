@@ -12,8 +12,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/email_generate', async (req, res) => {
     try {
-        res.json({ message: 'Email generation endpoint' });
+        const { emailContent, tone } = req.body;
+        
+        if (!emailContent) {
+            return res.status(400).json({ error: 'Email content is required' });
+        }
+
+        const result = await generateEmailReply(emailContent, tone);
+        res.json(result);
     } catch (error) {
+        console.error('Error in email generation:', error);
         res.status(500).json({ error: error.message });
     }
 });
