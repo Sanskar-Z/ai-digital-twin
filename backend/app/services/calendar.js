@@ -1,8 +1,6 @@
-// Load environment variables first
+
 const path = require('path');
 const dotenv = require('dotenv');
-
-// Ensure environment variables are loaded correctly
 dotenv.config({
     path: path.resolve(__dirname, '../.env')
 });
@@ -10,24 +8,18 @@ dotenv.config({
 const { google } = require('googleapis');
 const express = require('express');
 const app = express();
-
-// Log the loaded environment variables for debugging
 console.log('Calendar service initialized:');
 console.log('- GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Missing');
 console.log('- GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'Set' : 'Missing');
 console.log('- GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI ? 'Set' : 'Missing');
 console.log('- GOOGLE_REFRESH_TOKEN:', process.env.GOOGLE_REFRESH_TOKEN ? 'Set' : 'Missing');
 
-// Now create the OAuth client
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URI
 );
-
-// Set up authentication and utility functions
 const setupAuth = () => {
-  // Check if we have tokens stored somewhere and set them
   if (process.env.GOOGLE_REFRESH_TOKEN) {
     console.log('Setting up auth with refresh token');
     oauth2Client.setCredentials({
@@ -41,13 +33,11 @@ const setupAuth = () => {
   }
 };
 
-// Create calendar client
 const getCalendarClient = () => {
   const auth = setupAuth();
   return google.calendar({ version: 'v3', auth });
 };
 
-// Schedule a meeting
 const scheduleMeeting = async (meetingDetails) => {
   try {
     console.log('scheduleMeeting called with:', JSON.stringify(meetingDetails, null, 2));
@@ -57,26 +47,22 @@ const scheduleMeeting = async (meetingDetails) => {
     console.log('- GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI ? '✓ Set' : '✗ Missing');
     console.log('- GOOGLE_REFRESH_TOKEN:', process.env.GOOGLE_REFRESH_TOKEN ? '✓ Set' : '✗ Missing');
     
-    // Initialize auth and calendar clients
     const auth = setupAuth();
     const calendar = getCalendarClient();
     
     console.log('Auth credentials set:', !!auth.credentials);
-    
-    // Validate required fields
+
     if (!meetingDetails.subject) throw new Error('Meeting subject is required');
     if (!meetingDetails.startTime) throw new Error('Meeting start time is required');
     if (!meetingDetails.endTime) throw new Error('Meeting end time is required');
     
     const { subject, description, startTime, endTime, attendees, timeZone } = meetingDetails;
     
-    // Check if auth is set up properly
     if (!auth.credentials || !auth.credentials.refresh_token) {
       console.error('Missing authentication: No refresh token set in credentials.');
       throw new Error('Calendar API not authenticated. Please set up authentication first.');
     }
     
-    // Create event object for Google Calendar
     const event = {
       summary: subject,
       description: description || '',
@@ -96,7 +82,6 @@ const scheduleMeeting = async (meetingDetails) => {
     
     console.log('Creating event with:', JSON.stringify(event, null, 2));
     
-    // Attempt to insert the event
     try {
       const result = await calendar.events.insert({
         calendarId: 'primary',
@@ -119,18 +104,15 @@ const scheduleMeeting = async (meetingDetails) => {
   }
 };
 
-// Set reminder for an event
 const setReminder = async (eventId, reminderMinutes) => {
   const calendar = getCalendarClient();
   
   try {
-    // First get the event to preserve its existing data
     const event = await calendar.events.get({
       calendarId: 'primary',
       eventId: eventId,
     });
     
-    // Update the reminders
     const updatedEvent = {
       ...event.data,
       reminders: {
@@ -155,7 +137,6 @@ const setReminder = async (eventId, reminderMinutes) => {
   }
 };
 
-// Get calendar events in a time range
 const getCalendarEvents = async (startTime, endTime) => {
   const calendar = getCalendarClient();
   
@@ -177,7 +158,6 @@ const getCalendarEvents = async (startTime, endTime) => {
   }
 };
 
-// Delete an event
 const deleteEvent = async (eventId) => {
   const calendar = getCalendarClient();
   
@@ -194,7 +174,6 @@ const deleteEvent = async (eventId) => {
   }
 };
 
-// Generate the authorization URL
 app.get('/auth', (req, res) => {
   const scopes = [
     'https://www.googleapis.com/auth/calendar',
@@ -202,25 +181,20 @@ app.get('/auth', (req, res) => {
   ];
   
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', // This is essential to get a refresh token
+    access_type: 'offline', 
     scope: scopes,
-    prompt: 'consent' // Forces to show the consent screen each time
+    prompt: 'consent' 
   });
   
   res.redirect(url);
 });
 
-// Handle the callback after Google has authenticated the user
 app.get('/auth/google/callback', async (req, res) => {
   const { code } = req.query;
   
   try {
-    // Exchange the authorization code for tokens
     const { tokens } = await oauth2Client.getToken(code);
     console.log('Refresh token:', tokens.refresh_token);
-    
-    // Save these tokens to your database or .env file
-    // Store them securely
     
     res.send('Authentication successful! You can close this window.');
   } catch (error) {
@@ -229,9 +203,7 @@ app.get('/auth/google/callback', async (req, res) => {
   }
 });
 
-// Don't start a separate server here if this is being imported in server.js
 if (require.main === module) {
-  // Use a default port if GOOGLE_REDIRECT_URI is not defined
   const defaultPort = 4000;
   let serverPort = defaultPort;
   
@@ -260,4 +232,4 @@ module.exports = {
   setReminder,
   getCalendarEvents,
   deleteEvent
-};
+};s
