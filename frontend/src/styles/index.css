@@ -530,3 +530,34 @@ select:focus {
 .retry-btn:hover {
   background-color: #5a00d3;
 }
+
+/* Password input container */
+.password-input-container {
+  position: relative;
+}
+
+.password-input-container input {
+  padding-right: 30px; /* Add padding to make space for the icon */
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.forgot-password-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.forgot-password-button:hover {
+  color: #0056b3;
+}

@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'; // Import reset email function
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 import '../styles/index.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +27,25 @@ const Login = () => {
       alert('Login successful!');
     } catch (error) {
       console.error('Login failed:', error.message);
-      alert('Login failed. Please check your credentials and try again.');
+      if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        alert('Invalid username or password.');
+      } else {
+        alert('Login failed. Please check your credentials and try again.');
+      }
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert('Please enter your email to reset your password.');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert('Password reset email sent! Please check your inbox.');
+    } catch (error) {
+      console.error('Error sending password reset email:', error.message);
+      alert('Failed to send password reset email. Please try again.');
     }
   };
 
@@ -49,20 +73,29 @@ const Login = () => {
             </div>
             <div className="form-group">
               <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-              />
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                />
+                <span onClick={togglePasswordVisibility} className="password-toggle-icon">
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
             </div>
             <button type="submit">Login</button>
           </form>
           <div className="auth-links">
             <p>Don't have an account? <Link to="/signup">Sign up here</Link>.</p>
-            <p><Link to="/forgot-password">Forgot password?</Link></p>
+            <p>
+              <button type="button" onClick={handleForgotPassword} className="forgot-password-button">
+                Forgot password?
+              </button>
+            </p>
           </div>
         </section>
       </main>
