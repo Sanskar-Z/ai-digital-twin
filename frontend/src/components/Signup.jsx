@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth'; // Added signOut
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 import '../styles/index.css';
 
 const Signup = () => {
@@ -10,6 +11,8 @@ const Signup = () => {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,6 +20,10 @@ const Signup = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
   };
 
   const handleSubmit = async (e) => {
@@ -29,6 +36,12 @@ const Signup = () => {
       await updateProfile(user, { displayName: formData.name });
 
       alert('Signup successful! Please log in.');
+
+      // Log out the user after signup
+      await signOut(auth);
+
+      // Redirect to login page
+      navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error.message);
       alert('Signup failed. Please try again.');
@@ -72,15 +85,20 @@ const Signup = () => {
             </div>
             <div className="form-group">
               <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create a password"
-                required
-              />
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a password"
+                  required
+                />
+                <span onClick={togglePasswordVisibility} className="password-toggle-icon">
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
             </div>
             <button type="submit">Signup</button>
           </form>

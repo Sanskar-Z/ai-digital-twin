@@ -10,21 +10,24 @@ import Signup from './components/Signup';
 import EmailSummarize from './components/EmailSummarize';
 import { auth } from './firebase';
 
-function Header({ isAuthenticated, handleLogout }) {
+function Header({ isAuthenticated, handleLogout, userName }) {
   return (
     <header style={{ background: '#1a1a1a', color: 'white', padding: '20px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', position: 'sticky', top: 0, zIndex: 1000 }}>
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto' }}>
         <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
           <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>AI-Powered Digital Twin</h1>
         </Link>
-        <div style={{ display: 'flex', gap: '15px' }}>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           {isAuthenticated ? (
-            <button
-              onClick={handleLogout}
-              style={{ padding: '10px 20px', background: '#1a1a1a', color: '#bb86fc', textDecoration: 'none', border: '2px solid #6200ea', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'all 0.3s ease' }}
-            >
-              Logout
-            </button>
+            <>
+              <span style={{ color: '#bb86fc', fontWeight: 'bold', fontSize: '1rem' }}>Welcome, {userName}</span>
+              <button
+                onClick={handleLogout}
+                style={{ padding: '10px 20px', background: '#1a1a1a', color: '#bb86fc', textDecoration: 'none', border: '2px solid #6200ea', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'all 0.3s ease' }}
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <Link to="/login" style={{ padding: '10px 20px', background: '#1a1a1a', color: '#bb86fc', textDecoration: 'none', border: '2px solid #6200ea', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'all 0.3s ease' }}>
@@ -120,10 +123,12 @@ function ProtectedRoute({ children }) {
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!auth.currentUser);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsAuthenticated(!!user);
+      setUserName(user?.displayName || ''); // Fetch the user's display name
     });
     return () => unsubscribe();
   }, []);
@@ -131,12 +136,13 @@ function App() {
   const handleLogout = async () => {
     await auth.signOut();
     setIsAuthenticated(false);
+    setUserName('');
   };
 
   return (
     <Router>
       <div style={{ fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', margin: 0, padding: 0, background: '', color: '#333', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+        <Header isAuthenticated={isAuthenticated} handleLogout={handleLogout} userName={userName} />
         <div style={{ flex: 1, color: '#333' }}>
           <Routes>
             <Route path="/" element={<Home />} />
