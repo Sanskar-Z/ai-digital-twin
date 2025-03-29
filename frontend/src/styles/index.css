@@ -7,16 +7,15 @@
 body {
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
+  background-color: #333; /* Dark black background */
 }
-
-
 
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: #333; /* Dark black for container */
+  border-radius: 16px; /* Rounded corners */
 }
 
 header {
@@ -25,42 +24,42 @@ header {
 }
 
 header h1 {
-  color: #f2f1f4;
+  color: #bb86fc; /* Light purple */
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
 
-.title{
-  color: #6200ea;
+.title {
+  color: #bb86fc;
 }
 
 main {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background-color: #333;
 }
 
 section {
-  background: white;
-  border-radius: 8px;
+  background: #1a1a1a; /* Less black for sections */
+  border-radius: 16px; /* Rounded corners */
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 footer {
   margin-top: 3rem;
   text-align: center;
-  color: #666;
+  color: #888;
   padding: 1rem 0;
 }
 
-
 .home-button {
   display: inline-block;
-  background: #6200ea;
-  color: white;
+  background: #bb86fc;
+  color: #121212; /* Dark text on light button */
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 16px; /* Rounded corners */
   margin-bottom: 1.5rem;
   text-decoration: none;
   font-weight: bold;
@@ -68,20 +67,19 @@ footer {
 }
 
 .home-button:hover {
-  background: #5a00d3;
+  background: #9b67e8;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(98, 0, 234, 0.3);
+  box-shadow: 0 4px 8px rgba(187, 134, 252, 0.3);
 }
 
-
 h2 {
-  color: #6200ea;
+  color: #bb86fc;
   margin-bottom: 1rem;
   font-size: 1.8rem;
 }
 
 h3 {
-  color: #7c4dff;
+  color: #9b67e8;
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
@@ -89,8 +87,8 @@ h3 {
 p {
   line-height: 1.6;
   margin-bottom: 1rem;
+  color: #e0e0e0;
 }
-
 
 form {
   display: flex;
@@ -102,21 +100,23 @@ form {
 label {
   font-weight: bold;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #e0e0e0;
 }
 
 input, textarea {
   padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #333;
+  border-radius: 16px; /* Rounded corners */
   font-size: 1rem;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
   transition: border-color 0.3s ease;
 }
 
 input:focus, textarea:focus {
-  border-color: #6200ea;
+  border-color: #bb86fc;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+  box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
 }
 
 textarea {
@@ -125,11 +125,11 @@ textarea {
 }
 
 button {
-  background: #6200ea;
-  color: white;
+  background: #bb86fc;
+  color: #121212;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 16px; /* Rounded corners */
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
@@ -138,33 +138,26 @@ button {
 }
 
 button:hover {
-  background: #5a00d3;
+  background: #9b67e8;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(98, 0, 234, 0.3);
+  box-shadow: 0 4px 8px rgba(187, 134, 252, 0.3);
 }
 
-
 #output {
-  background: #f8f9fa;
+  background: #1e1e1e;
   padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid #7c4dff;
+  border-radius: 16px; /* Rounded corners */
+  border-left: 4px solid #9b67e8;
   margin-top: 1.5rem;
   min-height: 120px;
   transition: all 0.3s ease;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 #output:not(:empty) {
-  background: #f0f7ff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #2a2a2a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
-
-#output p {
-  line-height: 1.8;
-  color: #333;
-}
-
 
 .auth-form {
   max-width: 500px;
@@ -189,17 +182,18 @@ button:hover {
 
 select {
   padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #333;
+  border-radius: 16px; /* Rounded corners */
   font-size: 1rem;
-  background-color: white;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
   transition: border-color 0.3s ease;
 }
 
 select:focus {
-  border-color: #6200ea;
+  border-color: #bb86fc;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+  box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
 }
 
 .auth-links {
@@ -209,18 +203,15 @@ select:focus {
 }
 
 .auth-links a {
-  color: #6200ea;
+  color: #bb86fc;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .auth-links a:hover {
-  color: #5a00d3;
+  color: #9b67e8;
   text-decoration: underline;
-  background: transparent !important;
 }
-
-
 
 .feature-section {
   display: flex;
@@ -229,8 +220,9 @@ select:focus {
 }
 
 #demo {
-  background-color: #f5f0ff;
-  border-left: 4px solid #6200ea;
+  background-color: #2a2a2a;
+  border-left: 4px solid #bb86fc;
+  border-radius: 16px; /* Rounded corners */
 }
 
 #demo h3 {
@@ -243,11 +235,10 @@ select:focus {
   position: absolute;
   width: 50%;
   height: 3px;
-  background: #7c4dff;
+  background: #9b67e8;
   bottom: -8px;
   left: 0;
 }
-
 
 .loading {
   display: flex;
@@ -260,13 +251,13 @@ select:focus {
   animation: dots 1.5s steps(5, end) infinite;
   font-size: 1.5rem;
   font-weight: bold;
-  color: #6200ea;
+  color: #bb86fc;
 }
 
 .events-section {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #333;
 }
 
 .events-list {
@@ -281,10 +272,10 @@ select:focus {
   align-items: center;
   padding: 1rem;
   margin-bottom: 1rem;
-  background-color: #f9f7ff;
-  border-radius: 4px;
-  border-left: 3px solid #6200ea;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #2e2d2d;
+  border-radius: 16px; /* Rounded corners */
+  border-left: 3px solid #bb86fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .event-details {
@@ -294,13 +285,13 @@ select:focus {
 .event-details strong {
   display: block;
   margin-bottom: 0.25rem;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .event-details p {
   margin: 0;
   font-size: 0.9rem;
-  color: #666;
+  color: #aaa;
 }
 
 .delete-button {
@@ -308,7 +299,7 @@ select:focus {
   color: white;
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 16px; /* Rounded corners */
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
