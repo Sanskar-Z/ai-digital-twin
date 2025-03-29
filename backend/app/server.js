@@ -62,11 +62,29 @@ app.post('/calender', async (req, res) => {
 app.post('/calendar/schedule', async (req, res) => {
     try {
         const meetingDetails = req.body;
+        console.log('Received meeting scheduling request:', JSON.stringify(meetingDetails, null, 2));
+        
+        // Basic validation
+        if (!meetingDetails.subject) {
+            return res.status(400).json({ error: 'Meeting subject is required' });
+        }
+        if (!meetingDetails.startTime) {
+            return res.status(400).json({ error: 'Meeting start time is required' });
+        }
+        if (!meetingDetails.endTime) {
+            return res.status(400).json({ error: 'Meeting end time is required' });
+        }
+        
         const result = await scheduleMeeting(meetingDetails);
+        console.log('Meeting scheduled successfully');
         res.json(result);
     } catch (error) {
         console.error('Error scheduling meeting:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: 'Failed to schedule meeting', 
+            details: error.message,
+            suggestion: 'Ensure GOOGLE_REFRESH_TOKEN is set in your .env file'
+        });
     }
 });
 

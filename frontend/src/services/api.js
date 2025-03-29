@@ -49,6 +49,8 @@ export const newsService = {
 export const calendarService = {
   scheduleMeeting: async (meetingDetails) => {
     try {
+      console.log('Sending meeting request:', meetingDetails);
+      
       const response = await fetch(`${API_BASE_URL}/calendar/schedule`, {
         method: 'POST',
         headers: {
@@ -58,7 +60,9 @@ export const calendarService = {
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json();
+        console.error('Calendar API error:', errorData);
+        throw new Error(errorData.details || `HTTP error! Status: ${response.status}`);
       }
       
       return await response.json();
