@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import '../firebase'; // Ensure Firebase is initialized in this file
 import '../styles/index.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt with:', { email, password });
+    const auth = getAuth();
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      console.log('Login successful:', user);
+      alert('Login successful!');
+    } catch (error) {
+      console.error('Login failed:', error.message);
+      alert('Login failed. Please check your credentials and try again.');
+    }
   };
 
   return (
@@ -59,4 +71,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

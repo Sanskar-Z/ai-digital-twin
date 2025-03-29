@@ -9,16 +9,16 @@ import Signup from './components/Signup'
 
 function Header() {
   return (
-    <header style={{ background: '#5a00d3', color: 'white', padding: '20px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <header style={{ background: '#6200ea', color: 'white', padding: '20px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', position: 'sticky', top: 0, zIndex: 1000 }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto' }}>
         <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-          <h1 style={{ margin: 0, fontSize: '2rem' }}>AI-Powered Digital Twin</h1>
+          <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>AI-Powered Digital Twin</h1>
         </Link>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Link to="/login" style={{ padding: '10px 20px', background: 'white', color: '#5a00d3', textDecoration: 'none', border: '2px solid #5a00d3', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'background 0.3s ease, color 0.3s ease' }}>
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <Link to="/login" style={{ padding: '10px 20px', background: 'white', color: '#6200ea', textDecoration: 'none', border: '2px solid #6200ea', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'all 0.3s ease' }}>
             Login
           </Link>
-          <Link to="/signup" style={{ padding: '10px 20px', background: 'white', color: '#5a00d3', textDecoration: 'none', border: '2px solid #5a00d3', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'background 0.3s ease, color 0.3s ease' }}>
+          <Link to="/signup" style={{ padding: '10px 20px', background: 'white', color: '#6200ea', textDecoration: 'none', border: '2px solid #6200ea', borderRadius: '5px', fontWeight: 'bold', fontSize: '1rem', transition: 'all 0.3s ease' }}>
             Signup
           </Link>
         </div>
@@ -36,10 +36,10 @@ function FeatureList() {
   ]
 
   return (
-    <ul style={{ listStyle: 'none', padding: 0 }}>
+    <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
       {features.map((feature, index) => (
-        <li key={index} style={{ background: '#e0eafc', margin: '5px 0', padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-          <Link to={feature.href} style={{ textDecoration: 'none', color: '#5a00d3', fontWeight: 'bold' }}>
+        <li key={index} style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', transition: 'transform 0.2s ease' }}>
+          <Link to={feature.href} style={{ textDecoration: 'none', color: '#6200ea', fontWeight: 'bold', fontSize: '1.1rem' }}>
             {feature.title}
           </Link>
         </li>
@@ -50,25 +50,25 @@ function FeatureList() {
 
 function Home() {
   return (
-    <main style={{ maxWidth: '800px', margin: '20px auto', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    <main style={{ maxWidth: '1200px', margin: '20px auto', padding: '20px', background: 'white', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
       <section>
-        <h2 style={{ color: '#5a00d3' }}>Welcome to Your Digital Twin</h2>
-        <p>
+        <h2 style={{ color: '#6200ea', fontSize: '2rem', marginBottom: '10px' }}>Welcome to Your Digital Twin</h2>
+        <p style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>
           Your AI clone adapts to your browsing habits, tone, and decision-making to assist with tasks like email replies, scheduling, and research.
         </p>
       </section>
       <section>
-        <h3 style={{ color: '#5a00d3' }}>Features</h3>
+        <h3 style={{ color: '#6200ea', fontSize: '1.5rem', marginTop: '20px' }}>Features</h3>
         <FeatureList />
       </section>
     </main>
   )
 }
 
-function footer(){
-  return(
-    <footer style={{ background: '#5a00d3', color: 'white', padding: '20px', textAlign: 'center' }}>
-      <p>&copy; Code Crusaders</p>
+function Footer() {
+  return (
+    <footer style={{ background: '#6200ea', color: 'white', padding: '20px', textAlign: 'center', marginTop: '20px' }}>
+      <p style={{ margin: 0, fontSize: '1rem' }}>&copy; {new Date().getFullYear()} Code Crusaders. All rights reserved.</p>
     </footer>
   )
 }
@@ -76,17 +76,20 @@ function footer(){
 function App() {
   return (
     <Router>
-      <div style={{ fontFamily: 'Arial, sans-serif', margin: 0, padding: 0, background: 'linear-gradient(to right, #e0eafc, #cfdef3)', color: '#333' }}>
+      <div style={{ fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', margin: 0, padding: 0, background: '#f8f9fa', color: '#333', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/email-reply" element={<EmailReply />} />
-          <Route path="/news-summaries" element={<NewsSummaries />} />
-          <Route path="/calendar-management" element={<CalendarManagement />} />
-          <Route path="/research-assistance" element={<ResearchAssistance />} />
-          <Route path="/login" element={<Login/>} />
-          <Route path="/signup" element={<Signup/>} />
-        </Routes>
+        <div style={{ flex: 1 }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/email-reply" element={<EmailReply />} />
+            <Route path="/news-summaries" element={<NewsSummaries />} />
+            <Route path="/calendar-management" element={<CalendarManagement />} />
+            <Route path="/research-assistance" element={<ResearchAssistance />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   )

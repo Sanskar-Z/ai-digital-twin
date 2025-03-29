@@ -1,10 +1,24 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+require("dotenv").config();
+const axios = require("axios");
+const cheerio = require("cheerio");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-export const summarizeNewsByInterest = async (newsContent, userInterest) => {
+ const summarizeNewsByInterest = async (newsContentOrLink, userInterest) => {
     try {
+        let newsContent;
+
+        
+        if (newsContentOrLink.startsWith("http://") || newsContentOrLink.startsWith("https://")) {
+            const response = await axios.get(newsContentOrLink);
+            const $ = cheerio.load(response.data);
+            newsContent = $("body").text();
+        } else {
+            newsContent = newsContentOrLink;
+        }
+
         const summaryPrompt = `Summarize the following news content in a concise and clear manner, focusing on the user's interest: ${userInterest}.
         News content: ${newsContent}`;
         
@@ -18,3 +32,5 @@ export const summarizeNewsByInterest = async (newsContent, userInterest) => {
         throw error;
     }
 };
+
+exports.summarizeNewsByInterest = summarizeNewsByInterest;
