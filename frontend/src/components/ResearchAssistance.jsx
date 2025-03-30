@@ -92,17 +92,17 @@ const ResearchAssistance = () => {
         formData.append('pdfFile', file);
         formData.append('query', researchQuery || analysisType);
 
-        response = await fetch('http://localhost:3000/api/research/upload-pdf', { // Ensure correct backend URL
+        response = await fetch('http://localhost:3000/api/research/upload-pdf', {
           method: 'POST',
           body: formData,
         });
       } else {
         const requestBody = {
           input: input,
-          query: researchQuery || analysisType
+          query: researchQuery || analysisType,
         };
 
-        response = await fetch('http://localhost:3000/api/research/insights', { // Ensure correct backend URL
+        response = await fetch('http://localhost:3000/api/research/insights', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -112,7 +112,8 @@ const ResearchAssistance = () => {
       }
 
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server returned ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -124,11 +125,17 @@ const ResearchAssistance = () => {
       setAssistance(data.insights);
       window.scrollTo({
         top: document.getElementById('output').offsetTop - 20,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     } catch (err) {
       console.error('Error processing research:', err);
-      setError(err.message || 'An error occurred while processing your research query');
+      if (err.message.includes('corrupted or not supported')) {
+        setError('The uploaded PDF file is corrupted or not supported. Please try another file.');
+      } else if (err.message.includes('Failed to process PDF')) {
+        setError('An error occurred while processing the PDF. Please ensure the file is valid and try again.');
+      } else {
+        setError(err.message || 'An error occurred while processing your research query');
+      }
     } finally {
       setIsLoading(false);
     }

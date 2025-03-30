@@ -4,15 +4,20 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 const pdfParse = require('pdf-parse');
+const express = require('express');
+const multer = require('multer');
+const router = express.Router();
 
 const dotenv = require('dotenv');
 dotenv.config({
     path: '../.env' 
 });
 
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+// Configure multer for file uploads
+const upload = multer({ dest: path.join(__dirname, '../uploads') });
 
 /**
  * Extract text content from a URL
@@ -40,7 +45,7 @@ async function extractContentFromUrl(url) {
 async function extractPdfContent(source) {
   try {
     let dataBuffer;
-    
+
     // Check if the source is a URL or a local file path
     if (source.startsWith('http://') || source.startsWith('https://')) {
       // Download the PDF from URL
@@ -50,14 +55,19 @@ async function extractPdfContent(source) {
       // Read the PDF from local file path
       dataBuffer = fs.readFileSync(source);
     }
-    
+
     // Parse the PDF
     const data = await pdfParse(dataBuffer);
-    
+
     // Return the text content
     return data.text;
   } catch (error) {
     console.error('Error extracting PDF content:', error);
+    if (error.message.includes('Unexpected')) {
+      throw new Error('The PDF file is corrupted or not supported.');
+    } else if (error.message.includes('ENOENT')) {
+      throw new Error('The specified PDF file could not be found.');
+    }
     throw new Error(`Failed to extract PDF content: ${error.message}`);
   }
 }
@@ -397,6 +407,63 @@ async function cleanupUploadedFiles(maxAgeHours = 24) {
   }
 }
 
+// Endpoint to process research insights
+router.post('/insights', async (req, res) => {
+  try {
+    const { input, query } = req.body;
+    if (!input || !query) {
+      return res.status(400).json({ error: 'Input and query are required.' });
+    }
+    const result = await gatherInsights(input, query);
+    res.json(result);
+  } catch (error) {
+    console.error('Error in /insights endpoint:', error);
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
+});
+
+// Endpoint to process PDF uploads
+router.post('/upload-pdf', upload.single('pdfFile'), async (req, res) => {
+  try {
+    if (!req.file) {
+      console.error('No file uploaded in the request.');
+      return res.status(400).json({ error: 'No file uploaded.' });
+    }
+    const filePath = req.file.path;
+    const query = req.body.query;
+
+    if (!query) {
+      console.error('Query parameter is missing in the request.');
+      fs.unlinkSync(filePath); // Clean up uploaded file
+      return res.status(400).json({ error: 'Query is required.' });
+    }
+
+    console.log(`Processing uploaded file: ${filePath}`);
+    const content = await extractPdfContent(filePath);
+    console.log('PDF content extracted successfully.');
+
+    const result = await gatherInsights(content, query);
+    console.log('Insights gathered successfully.');
+
+    fs.unlinkSync(filePath); // Clean up uploaded file
+    res.json(result);
+  } catch (error) {
+    console.error('Error in /upload-pdf endpoint:', error);
+
+    // Ensure uploaded file is cleaned up in case of an error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    const errorMessage = error.message.includes('corrupted or not supported')
+      ? 'The uploaded PDF file is corrupted or not supported. Please try another file.'
+      : 'An error occurred while processing the PDF. Please try again.';
+
+    res.status(500).json({ error: errorMessage, details: error.message });
+  }
+});
+
+module.exports = router;
 module.exports = {
   gatherInsights,
   createStructuredSummary,
