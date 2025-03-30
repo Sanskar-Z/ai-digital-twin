@@ -8,20 +8,27 @@ const NewsSummaries = () => {
   const [userInterest, setUserInterest] = useState('');
   const [summary, setSummary] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
+    setSummary('');
     
     try {
       const result = await newsService.summarize(newsInput, userInterest);
       setSummary(result.summary);
     } catch (error) {
       console.error('Error generating summary:', error);
-      setSummary('An error occurred while generating the summary. Please try again.');
+      setError(error.response?.data?.details || error.message || 'An error occurred while generating the summary.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    handleSubmit({ preventDefault: () => {} });
   };
 
   return (
@@ -58,11 +65,18 @@ const NewsSummaries = () => {
                 placeholder="e.g., Technology, Politics, Sports"
               />
             </div>
-            <button type="submit">Generate Summary</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Generating...' : 'Generate Summary'}
+            </button>
           </form>
           <div id="output" aria-live="polite">
             {isLoading ? (
-              <div className="loading">Generating summary</div>
+              <div className="loading">Generating summary...</div>
+            ) : error ? (
+              <div className="error">
+                <p>Error: {error}</p>
+                <button onClick={handleRetry}>Retry</button>
+              </div>
             ) : (
               summary && <p>{summary}</p>
             )}

@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://localhost:3000';
+// Determine the base URL based on environment
+const isDevelopment = window.location.hostname === 'localhost';
+const API_BASE_URL = isDevelopment ? 'http://localhost:3000' : 'https://ai-digital-twin-backend.vercel.app';
+const AUTH_URL = isDevelopment ? 'http://localhost:4000/auth' : 'https://ai-digital-twin-backend.vercel.app/auth';
 
 export const emailService = {
   generateReply: async (emailContent, tone = 'professional') => {
@@ -56,13 +59,27 @@ export const newsService = {
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json();
+        console.error('News summarization API error:', errorData);
+        throw {
+          message: errorData.error || `HTTP error! Status: ${response.status}`,
+          response: { data: errorData },
+          status: response.status
+        };
       }
       
       return await response.json();
     } catch (error) {
       console.error('Error summarizing news:', error);
-      throw error;
+      // If this is already a structured error from above, rethrow it
+      if (error.response) {
+        throw error;
+      }
+      // Otherwise, create a structured error
+      throw {
+        message: error.message || 'Unknown error occurred',
+        status: 500
+      };
     }
   },
 };
@@ -94,7 +111,7 @@ export const calendarService = {
   },
   
   getAuthUrl: () => {
-    return `${API_BASE_URL}/calendar/auth`;
+    return AUTH_URL;
   },
   
   getEvents: async (startTime, endTime) => {
