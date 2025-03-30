@@ -15,8 +15,6 @@ const path = require('path');
 
 const app = express();
 
-require("./app/routes");
-
 const PORT = process.env.PORT || 3000;
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
