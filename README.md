@@ -130,7 +130,6 @@ ai-digital-twin/
 ### Calendar Services
 - `POST /calendar/schedule`: Schedule a new meeting
 - `GET /calendar/events`: Retrieve calendar events
-- `POST /calendar/reminder/:eventId`: Set reminder for an event
 - `DELETE /calendar/events/:eventId`: Delete a calendar event
 
 ### Research Services
@@ -146,4 +145,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Firebase](https://firebase.google.com/) for authentication and database
 - [React](https://reactjs.org/) for frontend framework
 - [Express](https://expressjs.com/) for backend API
-- [OpenAI API](https://openai.com/) for AI functionalities 
