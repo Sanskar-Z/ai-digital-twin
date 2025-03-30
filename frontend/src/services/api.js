@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://localhost:3000';
+// Determine the base URL based on environment
+const isDevelopment = window.location.hostname === 'localhost';
+const API_BASE_URL = isDevelopment ? 'http://localhost:3000' : 'https://ai-twin-backend.onrender.com'; // Replace with your actual Render URL
+const AUTH_URL = isDevelopment ? 'http://localhost:4000/auth' : 'https://ai-twin-backend.onrender.com/auth'; // Replace with your actual Render URL
 
 export const emailService = {
   generateReply: async (emailContent, tone = 'professional') => {
@@ -94,7 +97,7 @@ export const calendarService = {
   },
   
   getAuthUrl: () => {
-    return 'http://localhost:4000/auth';
+    return AUTH_URL;
   },
   
   getEvents: async (startTime, endTime) => {

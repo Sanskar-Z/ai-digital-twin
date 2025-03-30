@@ -8,6 +8,9 @@ const { summarizeNewsByInterest } = require('./services/news');
 const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require('./services/calendar');
 const { gatherInsights, cleanupUploadedFiles } = require('./services/researchAssistant');
 const researchRoutes = require('./routes/researchRoutes');
+const { google } = require('googleapis');
+const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -159,14 +162,45 @@ app.delete('/calendar/events/:eventId', async (req, res) => {
     }
 });
 
-app.get('/calendar/auth', (req, res) => {
-    try {
-        // Redirect to calendar service's auth endpoint
-        res.redirect('http://localhost:4000/auth');
-    } catch (error) {
-        console.error('Error redirecting to auth:', error);
-        res.status(500).json({ error: error.message });
-    }
+// Google OAuth routes
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI
+);
+
+app.get('/auth', (req, res) => {
+  const scopes = [
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.events'
+  ];
+  
+  const url = oauth2Client.generateAuthUrl({
+    access_type: 'offline', 
+    scope: scopes,
+    prompt: 'consent' 
+  });
+  
+  res.redirect(url);
+});
+
+app.get('/auth/google/callback', async (req, res) => {
+  const { code } = req.query;
+  
+  try {
+    const { tokens } = await oauth2Client.getToken(code);
+    console.log('Refresh token:', tokens.refresh_token);
+    
+    res.send(`
+      <h1>Authentication successful!</h1>
+      <p>Your refresh token is: <code>${tokens.refresh_token}</code></p>
+      <p>Please add this to your .env file as GOOGLE_REFRESH_TOKEN</p>
+      <p><a href="/">Return to application</a></p>
+    `);
+  } catch (error) {
+    console.error('Error getting tokens:', error);
+    res.status(500).send('Authentication failed');
+  }
 });
 
 app.post('/api/research-assistance', async (req, res) => {

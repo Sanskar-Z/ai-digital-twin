@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: ai-twin-backend
+    env: node
+    region: ohio
+    plan: free
+    buildCommand: cd backend/app && npm install
+    startCommand: cd backend/app && node server.js
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: CALENDAR_API_KEY
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://ai-twin-backend.onrender.com/auth/google/callback
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: NODE_ENV
+        value: production 
