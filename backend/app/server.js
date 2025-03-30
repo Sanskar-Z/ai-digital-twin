@@ -11,7 +11,6 @@ const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require
 const { gatherInsights, cleanupUploadedFiles } = require('./services/researchAssistant');
 const researchRoutes = require('./routes/researchRoutes');
 const { google } = require('googleapis');
-const path = require('path');
 
 const app = express();
 
