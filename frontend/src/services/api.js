@@ -94,7 +94,7 @@ export const calendarService = {
   },
   
   getAuthUrl: () => {
-    return `${API_BASE_URL}/calendar/auth`;
+    return 'http://localhost:4000/auth';
   },
   
   getEvents: async (startTime, endTime) => {
