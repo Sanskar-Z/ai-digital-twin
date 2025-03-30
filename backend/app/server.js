@@ -170,18 +170,29 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 app.get('/auth', (req, res) => {
-  const scopes = [
-    'https://www.googleapis.com/auth/calendar',
-    'https://www.googleapis.com/auth/calendar.events'
-  ];
-  
-  const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', 
-    scope: scopes,
-    prompt: 'consent' 
-  });
-  
-  res.redirect(url);
+  try {
+    console.log('Auth endpoint accessed');
+    console.log(`Using client ID: ${process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Not set'}`);
+    console.log(`Using client secret: ${process.env.GOOGLE_CLIENT_SECRET ? 'Set' : 'Not set'}`);
+    console.log(`Using redirect URI: ${process.env.GOOGLE_REDIRECT_URI}`);
+    
+    const scopes = [
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events'
+    ];
+    
+    const url = oauth2Client.generateAuthUrl({
+      access_type: 'offline', 
+      scope: scopes,
+      prompt: 'consent' 
+    });
+    
+    console.log(`Redirecting to: ${url}`);
+    res.redirect(url);
+  } catch (error) {
+    console.error('Error in auth endpoint:', error);
+    res.status(500).send(`Authentication error: ${error.message}`);
+  }
 });
 
 app.get('/auth/google/callback', async (req, res) => {
@@ -222,6 +233,26 @@ app.post('/api/research-assistance', async (req, res) => {
     }
 });
 
+// Place this route before the error handler middleware
+app.use((req, res) => {
+  console.log(`404 Not Found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ 
+    error: 'Not Found', 
+    path: req.originalUrl, 
+    method: req.method,
+    availableRoutes: [
+      '/api/health',
+      '/email_generate',
+      '/email_summarize',
+      '/news_summarize',
+      '/calendar/schedule',
+      '/calendar/events',
+      '/auth',
+      '/auth/google/callback'
+    ]
+  });
+});
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Something went wrong!' });
@@ -229,4 +260,8 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`Auth endpoint: /auth`);
+    console.log(`Callback endpoint: /auth/google/callback`);
+    console.log(`Google redirect URI: ${process.env.GOOGLE_REDIRECT_URI}`);
 });
