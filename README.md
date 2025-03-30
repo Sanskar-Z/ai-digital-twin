@@ -42,7 +42,7 @@ The application follows a client-server architecture:
 #### Backend Setup
 1. Clone the repository
    ```
-   git clone https://github.com/yourusername/ai-digital-twin.git
+   git clone https://github.com/Sanskar-Z/ai-digital-twin.git
    cd ai-digital-twin/backend
    ```
 
