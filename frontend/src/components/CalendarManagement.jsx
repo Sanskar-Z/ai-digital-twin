@@ -227,42 +227,34 @@ const CalendarManagement = () => {
               </form>
               
               <div id="output" aria-live="polite">
-                {isLoading ? (
-                  <div className="loading">Scheduling your meeting</div>
-                ) : (
-                  schedule && <p>{schedule}</p>
-                )}
+                {schedule && <p>{schedule}</p>}
               </div>
               
               <div className="events-section">
                 <h3>Upcoming Events</h3>
-                {isLoadingEvents ? (
-                  <div className="loading">Loading events</div>
-                ) : (
-                  <ul className="events-list">
-                    {events.length > 0 ? (
-                      events.map(event => (
-                        <li key={event.id} className="event-item">
-                          <div className="event-details">
-                            <strong>{event.summary}</strong>
-                            <p>
-                              {new Date(event.start.dateTime).toLocaleString()} - 
-                              {new Date(event.end.dateTime).toLocaleTimeString()}
-                            </p>
-                          </div>
-                          <button
-                            className="delete-button"
-                            onClick={() => handleDeleteEvent(event.id)}
-                          >
-                            Delete
-                          </button>
-                        </li>
-                      ))
-                    ) : (
-                      <p>No upcoming events found.</p>
-                    )}
-                  </ul>
-                )}
+                <ul className="events-list">
+                  {events.length > 0 ? (
+                    events.map(event => (
+                      <li key={event.id} className="event-item">
+                        <div className="event-details">
+                          <strong>{event.summary}</strong>
+                          <p>
+                            {new Date(event.start.dateTime).toLocaleString()} - 
+                            {new Date(event.end.dateTime).toLocaleTimeString()}
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => handleDeleteEvent(event.id)}
+                          className="delete-event-btn"
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li>No upcoming events found</li>
+                  )}
+                </ul>
               </div>
             </>
           ) : (

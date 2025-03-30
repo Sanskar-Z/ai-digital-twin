@@ -70,9 +70,7 @@ const NewsSummaries = () => {
             </button>
           </form>
           <div id="output" aria-live="polite">
-            {isLoading ? (
-              <div className="loading">Generating summary...</div>
-            ) : error ? (
+            {error ? (
               <div className="error">
                 <p>Error: {error}</p>
                 <button onClick={handleRetry}>Retry</button>

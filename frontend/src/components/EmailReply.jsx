@@ -64,11 +64,7 @@ const EmailReply = () => {
             <button type="submit">Generate Reply</button>
           </form>
           <div id="output" aria-live="polite">
-            {isLoading ? (
-              <div className="loading">Crafting your reply</div>
-            ) : (
-              reply && <p>{reply}</p>
-            )}
+            {reply && <p>{reply}</p>}
           </div>
         </section>
       </main>

@@ -9,6 +9,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
@@ -16,6 +18,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -28,10 +32,12 @@ const Login = () => {
     } catch (error) {
       console.error('Login failed:', error.message);
       if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-        alert('Invalid username or password.');
+        setError('Invalid username or password.');
       } else {
-        alert('Login failed. Please check your credentials and try again.');
+        setError('Login failed. Please check your credentials and try again.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,7 +93,10 @@ const Login = () => {
                 </span>
               </div>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </button>
+            {error && <p className="error-message">{error}</p>}
           </form>
           <div className="auth-links">
             <p>Don't have an account? <Link to="/signup">Sign up here</Link>.</p>

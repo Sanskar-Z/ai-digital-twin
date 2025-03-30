@@ -8,7 +8,6 @@ const ResearchAssistance = () => {
   const [assistance, setAssistance] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [file, setFile] = useState(null);
   const [inputType, setInputType] = useState('text'); 
   const [analysisType, setAnalysisType] = useState('summarize');
   const [serverStatus, setServerStatus] = useState({ checked: false, online: true });
@@ -41,12 +40,7 @@ const ResearchAssistance = () => {
       return false;
     }
     
-    if (inputType === 'file') {
-      if (!file) {
-        setError('Please select a PDF file to upload.');
-        return false;
-      }
-    } else if (inputType === 'url') {
+    if (inputType === 'url') {
       if (!input) {
         setError('Please enter a URL.');
         return false;
@@ -76,40 +70,27 @@ const ResearchAssistance = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setAssistance('');
 
     if (!validateInput()) {
       return;
     }
 
     setIsLoading(true);
-    setAssistance('');
-
+    
     try {
-      let response;
+      const requestBody = {
+        input: input,
+        query: researchQuery || analysisType,
+      };
 
-      if (inputType === 'file' && file) {
-        const formData = new FormData();
-        formData.append('pdfFile', file);
-        formData.append('query', researchQuery || analysisType);
-
-        response = await fetch('http://localhost:3000/api/research/upload-pdf', {
-          method: 'POST',
-          body: formData,
-        });
-      } else {
-        const requestBody = {
-          input: input,
-          query: researchQuery || analysisType,
-        };
-
-        response = await fetch('http://localhost:3000/api/research/insights', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        });
-      }
+      const response = await fetch('http://localhost:3000/api/research/insights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -129,28 +110,9 @@ const ResearchAssistance = () => {
       });
     } catch (err) {
       console.error('Error processing research:', err);
-      if (err.message.includes('corrupted or not supported')) {
-        setError('The uploaded PDF file is corrupted or not supported. Please try another file.');
-      } else if (err.message.includes('Failed to process PDF')) {
-        setError('An error occurred while processing the PDF. Please ensure the file is valid and try again.');
-      } else {
-        setError(err.message || 'An error occurred while processing your research query');
-      }
+      setError(err.message || 'An error occurred while processing your research query');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
-      setFile(selectedFile);
-      setInputType('file');
-      setError('');
-    } else if (selectedFile) {
-      setError('Please upload a PDF file.');
-      e.target.value = null;
-      setFile(null);
     }
   };
   
@@ -161,6 +123,11 @@ const ResearchAssistance = () => {
   
   const clearResults = () => {
     setAssistance('');
+    // Scroll back to the form
+    window.scrollTo({
+      top: document.getElementById('demo').offsetTop - 20,
+      behavior: 'smooth',
+    });
   };
   
   const retryServerConnection = async () => {
@@ -242,45 +209,24 @@ const ResearchAssistance = () => {
                   >
                     URL
                   </button>
-                  <button 
-                    type="button" 
-                    className={`input-type-btn ${inputType === 'file' ? 'active' : ''}`}
-                    onClick={() => handleInputTypeChange('file')}
-                  >
-                    PDF Upload
-                  </button>
                 </div>
               </div>
               
-              {inputType === 'file' ? (
-                <div className="form-group">
-                  <label htmlFor="fileInput">Upload a PDF document:</label>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileChange}
-                    className="file-input"
-                  />
-                  {file && <p className="file-name">Selected: {file.name}</p>}
-                </div>
-              ) : (
-                <div className="form-group">
-                  <label htmlFor="inputField">
-                    {inputType === 'url' ? 'Enter a URL to analyze:' : 'Paste research content to analyze:'}
-                  </label>
-                  <textarea
-                    id="inputField"
-                    value={input}
-                    onChange={(e) => {
-                      setInput(e.target.value);
-                      if (error) setError('');
-                    }}
-                    placeholder={inputType === 'url' ? 'https://example.com/research-paper.html' : 'Paste research content here...'}
-                    className="input-field"
-                  />
-                </div>
-              )}
+              <div className="form-group">
+                <label htmlFor="inputField">
+                  {inputType === 'url' ? 'Enter a URL to analyze:' : 'Paste research content to analyze:'}
+                </label>
+                <textarea
+                  id="inputField"
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder={inputType === 'url' ? 'https://example.com/research-paper.html' : 'Paste research content here...'}
+                  className="input-field"
+                />
+              </div>
               
               <div className="form-group">
                 <label>What would you like to know?</label>
@@ -339,27 +285,20 @@ const ResearchAssistance = () => {
             )}
             
             <div id="output" aria-live="polite">
-              {isLoading ? (
-                <div className="loading">Researching...</div>
-              ) : (
-                assistance && (
-                  <div className="result-container">
-                    <h4>Research Insights</h4>
-                    <div className="insights-content">
-                      {assistance.split('\n').map((paragraph, index) => (
-                        paragraph ? <p key={index}>{paragraph}</p> : <br key={index} />
-                      ))}
-                    </div>
+              {assistance ? (
+                <div className="result-container">
+                  <h4>Research Insights</h4>
+                  <div className="insights-content">
+                    {assistance.split('\n').map((paragraph, index) => (
+                      paragraph ? <p key={index}>{paragraph}</p> : <br key={index} />
+                    ))}
                   </div>
-                )
-              )}
+                </div>
+              ) : null}
             </div>
           </section>
         )}
       </main>
-      <footer>
-        <p>&copy; Code Crusaders</p>
-      </footer>
     </div>
   );
 };

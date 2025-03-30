@@ -9,9 +9,12 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,7 +31,13 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
     try {
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
@@ -44,7 +53,9 @@ const Signup = () => {
       navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error.message);
-      alert('Signup failed. Please try again.');
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,7 +111,21 @@ const Signup = () => {
                 </span>
               </div>
             </div>
-            <button type="submit">Signup</button>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password:</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Creating Account...' : 'Sign Up'}
+            </button>
+            {error && <p className="error-message">{error}</p>}
           </form>
           <div className="auth-links">
             <p>Already have an account? <Link to="/login">Log in here</Link>.</p>
