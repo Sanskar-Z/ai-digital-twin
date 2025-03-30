@@ -11,7 +11,6 @@ dotenv.config({
 });
 
 
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
@@ -111,46 +110,30 @@ function detectContentStructure(content) {
  */
 async function processWithAI(content, query) {
   try {
-    // Detect the content structure
     const contentType = detectContentStructure(content);
     let prompt = '';
-    
+
     // Customize prompt based on query and content structure
-    if (query.includes('summarize')) {
-      if (contentType === 'academic') {
-        prompt = `I have the following academic paper. Please provide a comprehensive summary focused on the main findings and contributions: 
-        
-        ${content}`;
-      } else if (contentType === 'bullet_points') {
-        prompt = `I have the following bullet-point research findings. Please synthesize them into a coherent summary: 
-        
-        ${content}`;
-      } else {
-        prompt = `I have the following research content. Please provide a comprehensive summary: 
-        
-        ${content}`;
-      }
-    } else if (query.includes('key findings') || query.includes('insights')) {
-      prompt = `I have the following research content. Please extract and explain the key findings and insights:
-      
-      ${content}`;
-    } else if (query.includes('methodology')) {
-      prompt = `I have the following research content. Please analyze and explain the methodology used:
-      
-      ${content}`;
-    } else if (query.includes('literature review') || query.includes('related work')) {
-      prompt = `I have the following research content. Please identify and analyze the literature review or related work section:
-      
-      ${content}`;
-    } else if (query.includes('future work') || query.includes('limitations')) {
-      prompt = `I have the following research content. Please identify limitations and future work possibilities:
-      
-      ${content}`;
-    } else {
-      prompt = `I have the following research content. Please address this specific query: ${query}
-      
-      ${content}`;
+    switch (query.toLowerCase()) {
+      case 'summarize':
+        prompt = `Summarize the following research content:\n\n${content}`;
+        break;
+      case 'key findings':
+        prompt = `Extract the key findings from the following research content:\n\n${content}`;
+        break;
+      case 'methodology':
+        prompt = `Analyze the methodology used in the following research content:\n\n${content}`;
+        break;
+      case 'literature review':
+        prompt = `Identify and analyze the literature review or related work in the following research content:\n\n${content}`;
+        break;
+      case 'future work':
+        prompt = `Identify limitations and future research directions in the following research content:\n\n${content}`;
+        break;
+      default:
+        prompt = `Address the following query: "${query}" based on the research content:\n\n${content}`;
     }
+
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
@@ -340,30 +323,36 @@ function processResearchCopyPaste(content) {
  */
 async function gatherInsights(input, query) {
   try {
+    console.log('Gathering insights for input and query:', { input, query });
     let content = input;
+
     if (input.startsWith('http://') || input.startsWith('https://')) {
       if (input.toLowerCase().endsWith('.pdf')) {
+        console.log('Input is a PDF URL. Extracting content...');
         content = await extractPdfContent(input);
       } else {
+        console.log('Input is a webpage URL. Extracting content...');
         content = await extractContentFromUrl(input);
       }
     } else if (input.toLowerCase().endsWith('.pdf') && fs.existsSync(input)) {
-      // Handle local PDF file
+      console.log('Input is a local PDF file. Extracting content...');
       content = await extractPdfContent(input);
     } else {
-      // Process content if it appears to be copy-pasted research
+      console.log('Input is plain text. Processing...');
       content = processResearchCopyPaste(content);
     }
-    
+
     // Limit content size for the AI model
     if (content.length > 100000) {
+      console.warn('Content length exceeds 100,000 characters. Truncating...');
       content = content.substring(0, 100000);
     }
-    
+
     const result = await processWithAI(content, query);
+    console.log('Insights gathered successfully:', result);
     return result;
   } catch (error) {
-    console.error('Error in gatherInsights:', error);
+    console.error('Error in gatherInsights:', error.message, error.stack);
     return {
       error: error.message,
       success: false

@@ -76,24 +76,23 @@ const ResearchAssistance = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (!validateInput()) {
       return;
     }
-    
+
     setIsLoading(true);
     setAssistance('');
-    
+
     try {
       let response;
-      
+
       if (inputType === 'file' && file) {
-        // Handle file upload
         const formData = new FormData();
         formData.append('pdfFile', file);
         formData.append('query', researchQuery || analysisType);
-        
-        response = await fetch('/api/research/upload-pdf', {
+
+        response = await fetch('http://localhost:3000/api/research/upload-pdf', { // Ensure correct backend URL
           method: 'POST',
           body: formData,
         });
@@ -102,10 +101,8 @@ const ResearchAssistance = () => {
           input: input,
           query: researchQuery || analysisType
         };
-        
-        console.log('Processing research query:', requestBody);
-        
-        response = await fetch('/api/research/insights', {
+
+        response = await fetch('http://localhost:3000/api/research/insights', { // Ensure correct backend URL
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -113,29 +110,17 @@ const ResearchAssistance = () => {
           body: JSON.stringify(requestBody),
         });
       }
+
       if (!response.ok) {
-        const errorMessage = `Server returned ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
       }
-      
-      const responseText = await response.text();
-      
-      if (!responseText || responseText.trim() === '') {
-        throw new Error('Server returned an empty response');
-      }
-    
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error('Failed to parse JSON response:', responseText);
-        throw new Error('Invalid response from server. The response was not proper JSON.');
-      }
-      
+
+      const data = await response.json();
+
       if (!data.insights) {
         throw new Error('Response missing insights data');
       }
-      
+
       setAssistance(data.insights);
       window.scrollTo({
         top: document.getElementById('output').offsetTop - 20,
@@ -143,21 +128,7 @@ const ResearchAssistance = () => {
       });
     } catch (err) {
       console.error('Error processing research:', err);
-      
-      if (err.name === 'TypeError' && err.message.includes('NetworkError')) {
-        setError('Network error: Unable to connect to the server. Please check your connection and try again.');
-      } else if (err.message.includes('404')) {
-        setError(`API endpoint not found (404). This could mean: 
-          1. The backend server is running but missing the required route
-          2. You're connected to the wrong backend server
-          3. The API path has changed
-          
-          Please check that the backend server is properly configured and running.`);
-          
-        setServerStatus({ checked: true, online: false });
-      } else {
-        setError(err.message || 'An error occurred while processing your research query');
-      }
+      setError(err.message || 'An error occurred while processing your research query');
     } finally {
       setIsLoading(false);
     }
@@ -386,4 +357,4 @@ const ResearchAssistance = () => {
   );
 };
 
-export default ResearchAssistance; 
+export default ResearchAssistance;

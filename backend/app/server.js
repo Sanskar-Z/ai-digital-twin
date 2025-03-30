@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
 const { generateEmailReply } = require('./services/emailReply');
 const { summarizeEmail } = require('./services/emailSummarize');
 const { summarizeNewsByInterest } = require('./services/news');
@@ -9,7 +11,11 @@ const { scheduleMeeting, setReminder, getCalendarEvents, deleteEvent } = require
 const { gatherInsights, cleanupUploadedFiles } = require('./services/researchAssistant');
 const researchRoutes = require('./routes/researchRoutes');
 const app = express();
+
+require("./app/routes");
+
 const PORT = process.env.PORT || 3000;
+const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 // Configure uploads directory cleanup interval (every 6 hours)
 const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
@@ -185,6 +191,53 @@ app.post('/api/research-assistance', async (req, res) => {
     } catch (error) {
         console.error('Error in /api/research-assistance:', error);
         res.status(500).json({ error: 'An error occurred while processing your request.' });
+    }
+});
+
+// Endpoint to process research insights
+app.post('/api/research/insights', async (req, res) => {
+    try {
+        const { input, query } = req.body;
+        if (!input || !query) {
+            console.error('Error: Missing input or query in request body.');
+            return res.status(400).json({ error: 'Input and query are required' });
+        }
+
+        console.log('Processing research insights with input and query:', { input, query });
+        const result = await gatherInsights(input, query);
+        console.log('Research insights processed successfully:', result);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error in /api/research/insights:', error.message, error.stack);
+        res.status(500).json({ 
+            error: 'An internal server error occurred while processing research insights.',
+            details: error.message
+        });
+    }
+});
+
+// Endpoint to handle PDF uploads
+app.post('/api/research/upload-pdf', upload.single('pdfFile'), async (req, res) => {
+    try {
+        const file = req.file;
+        const query = req.body.query;
+
+        if (!file || !query) {
+            console.error('Error: Missing PDF file or query in request.');
+            return res.status(400).json({ error: 'PDF file and query are required' });
+        }
+
+        const filePath = path.join(__dirname, 'uploads', file.filename);
+        console.log('Processing PDF upload with file path and query:', { filePath, query });
+        const result = await gatherInsights(filePath, query);
+        console.log('PDF processed successfully:', result);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error in /api/research/upload-pdf:', error.message, error.stack);
+        res.status(500).json({ 
+            error: 'An internal server error occurred while processing the PDF upload.',
+            details: error.message
+        });
     }
 });
 

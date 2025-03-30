@@ -7,15 +7,15 @@
 body {
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #333; /* Dark black background */
+  background-color: #333; 
 }
 
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #333; /* Dark black for container */
-  border-radius: 16px; /* Rounded corners */
+  background-color: #333; 
+  border-radius: 16px; 
 }
 
 header {
@@ -24,7 +24,7 @@ header {
 }
 
 header h1 {
-  color: #bb86fc; /* Light purple */
+  color: #bb86fc; 
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
@@ -41,8 +41,8 @@ main {
 }
 
 section {
-  background: #1a1a1a; /* Less black for sections */
-  border-radius: 16px; /* Rounded corners */
+  background: #1a1a1a; 
+  border-radius: 16px; 
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
@@ -57,9 +57,9 @@ footer {
 .home-button {
   display: inline-block;
   background: #bb86fc;
-  color: #121212; /* Dark text on light button */
+  color: #121212; 
   padding: 0.5rem 1rem;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px; 
   margin-bottom: 1.5rem;
   text-decoration: none;
   font-weight: bold;
@@ -106,7 +106,7 @@ label {
 input, textarea {
   padding: 0.75rem;
   border: 1px solid #333;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px; 
   font-size: 1rem;
   background-color: #1e1e1e;
   color: #e0e0e0;
@@ -117,6 +117,7 @@ input:focus, textarea:focus {
   border-color: #bb86fc;
   outline: none;
   box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
+  color: black;
 }
 
 textarea {
@@ -129,7 +130,7 @@ button {
   color: #121212;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
@@ -146,7 +147,7 @@ button:hover {
 #output {
   background: #1e1e1e;
   padding: 1.5rem;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px;
   border-left: 4px solid #9b67e8;
   margin-top: 1.5rem;
   min-height: 120px;
@@ -183,7 +184,7 @@ button:hover {
 select {
   padding: 0.75rem;
   border: 1px solid #333;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px; 
   font-size: 1rem;
   background-color: #1e1e1e;
   color: #e0e0e0;
@@ -194,6 +195,7 @@ select:focus {
   border-color: #bb86fc;
   outline: none;
   box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
+  color: black;
 }
 
 .auth-links {
@@ -222,7 +224,7 @@ select:focus {
 #demo {
   background-color: #2a2a2a;
   border-left: 4px solid #bb86fc;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px; 
 }
 
 #demo h3 {
@@ -273,7 +275,7 @@ select:focus {
   padding: 1rem;
   margin-bottom: 1rem;
   background-color: #2e2d2d;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px;
   border-left: 3px solid #bb86fc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -299,7 +301,7 @@ select:focus {
   color: white;
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 16px; /* Rounded corners */
+  border-radius: 16px; 
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -309,7 +311,6 @@ select:focus {
   background-color: #e61a4d;
 }
 
-/* Research Assistant Styles */
 .input-field, 
 .query-field {
   width: 100%;
@@ -363,7 +364,7 @@ select:focus {
   border-left: 4px solid #c62828;
 }
 
-/* Loading animation for research processing */
+
 .loading {
   display: flex;
   align-items: center;
@@ -395,7 +396,6 @@ select:focus {
   }
 }
 
-/* Input type selector */
 .input-type-selector {
   display: flex;
   margin-bottom: 1rem;
@@ -427,7 +427,7 @@ select:focus {
   border-color: #5a00d3;
 }
 
-/* File input styling */
+
 .file-input {
   display: block;
   width: 100%;
@@ -445,7 +445,7 @@ select:focus {
   font-style: italic;
 }
 
-/* Analysis type selector */
+
 .analysis-type-select {
   width: 100%;
   padding: 0.75rem;
@@ -461,7 +461,7 @@ select:focus {
   margin-top: 0.5rem;
 }
 
-/* Buttons row */
+
 .buttons-row {
   display: flex;
   gap: 1rem;
@@ -482,7 +482,7 @@ select:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Make the form look better on mobile */
+
 @media (max-width: 768px) {
   .input-type-selector {
     flex-direction: column;
@@ -498,7 +498,7 @@ select:focus {
   }
 }
 
-/* Server error section */
+
 .server-error-section {
   border-left: 4px solid #ff3860;
   background-color: #fff8f8;
@@ -531,13 +531,13 @@ select:focus {
   background-color: #5a00d3;
 }
 
-/* Password input container */
+
 .password-input-container {
   position: relative;
 }
 
 .password-input-container input {
-  padding-right: 30px; /* Add padding to make space for the icon */
+  padding-right: 30px; 
 }
 
 .password-toggle-icon {
