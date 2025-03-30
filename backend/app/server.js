@@ -17,26 +17,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-// Configure uploads directory cleanup interval (every 6 hours)
-const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; 
 setInterval(() => {
     console.log('Running scheduled cleanup of uploaded files');
-    cleanupUploadedFiles(12); // Delete files older than 12 hours
+    cleanupUploadedFiles(12); 
 }, CLEANUP_INTERVAL_MS);
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Use research routes
 app.use('/api/research', researchRoutes);
 
-// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Root route for basic testing
 app.get('/', (req, res) => {
   res.send(`
     <h1>AI Digital Twin Server</h1>
@@ -114,7 +110,6 @@ app.post('/news_summarize', async (req, res) => {
             return res.status(400).json({ error: 'News content is required' });
         }
 
-        // Implement retry logic
         let retries = 3;
         let result;
         let lastError;
@@ -122,13 +117,12 @@ app.post('/news_summarize', async (req, res) => {
         while (retries > 0) {
             try {
                 result = await summarizeNewsByInterest(newsContent, userInterest);
-                break; // If successful, exit the loop
+                break;
             } catch (error) {
                 lastError = error;
                 console.error(`Attempt ${4-retries}/3 failed:`, error);
                 retries--;
                 if (retries > 0) {
-                    // Wait 1 second before retrying
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
@@ -223,14 +217,12 @@ app.delete('/calendar/events/:eventId', async (req, res) => {
     }
 });
 
-// Google OAuth routes
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URI
 );
 
-// Validate OAuth2 configuration
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
   console.error('WARNING: Google OAuth2 configuration is incomplete. The authentication flow will not work properly.');
   console.error('Missing environment variables:', {
@@ -240,7 +232,6 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !proce
   });
 }
 
-// Special route to help debug direct callback access issues
 app.get('/auth/google', (req, res) => {
   console.log('Base callback path accessed without full path');
   res.status(200).send(`

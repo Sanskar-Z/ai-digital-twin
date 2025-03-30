@@ -113,12 +113,6 @@ input, textarea {
   transition: border-color 0.3s ease;
 }
 
-input:focus, textarea:focus {
-  border-color: #bb86fc;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
-  color: black;
-}
 
 textarea {
   min-height: 120px;
@@ -195,7 +189,7 @@ select:focus {
   border-color: #bb86fc;
   outline: none;
   box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
-  color: black;
+  color: white;
 }
 
 .auth-links {
@@ -315,8 +309,20 @@ select:focus {
 .query-field {
   width: 100%;
   font-family: inherit;
-  padding: 1rem;
-  background-color: white;
+  padding: 0.75rem;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 16px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus,
+.query-field:focus {
+  border-color: #bb86fc;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
 }
 
 .input-field {
@@ -328,19 +334,19 @@ select:focus {
 }
 
 .result-container {
-  background-color: white;
+  background-color: #2a2a2a;
   border-radius: 8px;
   padding: 1.5rem;
   margin-top: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #6200ea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-left: 4px solid #bb86fc;
 }
 
 .result-container h4 {
-  color: #6200ea;
+  color: #bb86fc;
   margin-bottom: 1rem;
   font-size: 1.3rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #444;
   padding-bottom: 0.5rem;
 }
 
@@ -356,8 +362,8 @@ select:focus {
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(198, 40, 40, 0.2);
+  color: #ff5252;
   padding: 1rem;
   border-radius: 4px;
   margin-top: 1rem;
@@ -451,7 +457,8 @@ select:focus {
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: white;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
   font-size: 1rem;
   margin-bottom: 1rem;
 }
